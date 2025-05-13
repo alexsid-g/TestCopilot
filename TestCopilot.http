@@ -1,0 +1,62 @@
+@HostAddress = http://localhost:5122
+
+### Get all users (Unauthorized)
+GET {{HostAddress}}/users
+Accept: application/json
+
+### Get all users (Unauthorized: bad token)
+GET {{HostAddress}}/users
+Authorization: Bearer bad-token
+Accept: application/json
+
+### Get all users
+GET {{HostAddress}}/users
+Authorization: Bearer your-secret-token
+Accept: application/json
+
+### Get a user by ID
+GET {{HostAddress}}/users/1
+Authorization: Bearer your-secret-token
+Accept: application/json
+
+### Create a new user
+POST {{HostAddress}}/users
+Authorization: Bearer your-secret-token
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com"   
+}
+
+### Create a new user (validation error)
+POST {{HostAddress}}/users
+Authorization: Bearer your-secret-token
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "John Error",
+    "email": ""   
+}
+
+### Update an existing user
+PUT {{HostAddress}}/users/1
+Content-Type: application/json
+Authorization: Bearer your-secret-token
+Accept: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com"
+}
+
+### Delete a user by ID
+DELETE {{HostAddress}}/users/1
+
+### Test exception
+GET {{HostAddress}}/exception
+
+### Test error endpoint
+GET {{HostAddress}}/error
