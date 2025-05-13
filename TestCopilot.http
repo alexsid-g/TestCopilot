@@ -20,6 +20,11 @@ GET {{HostAddress}}/users/1
 Authorization: Bearer your-secret-token
 Accept: application/json
 
+### Get a user by ID (not found)
+GET {{HostAddress}}/users/100
+Authorization: Bearer your-secret-token
+Accept: application/json
+
 ### Create a new user
 POST {{HostAddress}}/users
 Authorization: Bearer your-secret-token
