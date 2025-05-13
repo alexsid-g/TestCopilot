@@ -11,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Use of ConcurrentDictionary suggested by Copilot
 var users = new ConcurrentDictionary<int, User>(){
     [1] = new User { Id = 1, Name = "User Name 1", Email = "user@mail.com"},
     [2] = new User { Id = 2, Name = "Alex Sid 2", Email = "alexsid@mail.com"},
@@ -18,7 +20,6 @@ var users = new ConcurrentDictionary<int, User>(){
 var nextId = 3;
 
 // Add middleware to catch unhandled exceptions
-app.UseExceptionHandler("/error");
 app.Map("/error", (HttpContext ctx) => {
     var exception = ctx.Features
         .Get<IExceptionHandlerFeature>()?
@@ -89,7 +90,10 @@ app.Use(async (context, next) =>
     Console.WriteLine($"Incoming Request: {context.Request.Method} {context.Request.Path}");
     if (context.Request.ContentLength > 0 && context.Request.Body.CanSeek)
     {
+        // Debugged with Copilot (added EnableBuffering)
+        context.Request.EnableBuffering();
         context.Request.Body.Position = 0;
+
         using var reader = new StreamReader(context.Request.Body);
         var body = await reader.ReadToEndAsync();
         Console.WriteLine($"Request Body: {body}");
@@ -134,6 +138,7 @@ app.MapGet("/users/{id:int}", (int id) =>
     return Results.NotFound();
 });
 
+// Validation added by Copilot
 app.MapPost("/users", (User user) =>
 {
     if (string.IsNullOrWhiteSpace(user.Name) ||
@@ -147,8 +152,14 @@ app.MapPost("/users", (User user) =>
     return Results.Created($"/users/{user.Id}", user);
 });
 
+// Validation added by Copilot
 app.MapPut("/users/{id:int}", (int id, User updatedUser) =>
 {
+    if (id != updatedUser.Id)
+    {
+        return Results.BadRequest("ID in URL does not match ID in the body.");
+    }
+
     if (string.IsNullOrWhiteSpace(updatedUser.Name) ||
         string.IsNullOrWhiteSpace(updatedUser.Email))
     {
